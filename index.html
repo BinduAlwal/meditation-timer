@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <title>Meditation Timer</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a1a1c" media="(prefers-color-scheme: dark)" />
+
+  <!-- iOS Add-to-Home-Screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Meditation" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" sizes="192x192" />
+  <link rel="icon" type="image/png" href="icons/icon-512.png" sizes="512x512" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Setup View -->
+    <div id="setup-view" class="view active">
+      <header class="app-header">
+        <h1>Meditation</h1>
+        <p id="session-subtitle" class="subtitle">Build your session</p>
+      </header>
+
+      <section class="card" id="sessions-card">
+        <div class="section-header">
+          <h2>My sessions</h2>
+          <button id="new-session-btn" class="btn btn-small">+ New</button>
+        </div>
+        <div id="sessions-list"></div>
+        <p id="sessions-empty" class="muted empty-hint">No saved sessions yet. Build one below and tap Save.</p>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h2 id="current-session-title">Intervals</h2>
+          <span id="total-time" class="muted">Total: 0:00</span>
+        </div>
+        <div id="intervals-list"></div>
+        <div class="add-row">
+          <button id="add-interval" class="btn btn-ghost">+ Add interval</button>
+        </div>
+        <div class="preset-row">
+          <button class="btn btn-small preset" data-preset="breath">Breath (3 min)</button>
+          <button class="btn btn-small preset" data-preset="body">Body scan (10 min)</button>
+          <button class="btn btn-small preset" data-preset="deep">Deep (20 min)</button>
+        </div>
+        <div class="session-action-row">
+          <button id="save-session-btn" class="btn btn-small">Save</button>
+          <button id="save-as-btn" class="btn btn-small">Save as…</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h2>Chimes</h2>
+        </div>
+        <div class="setting-row">
+          <label for="chime-type">Sound</label>
+          <select id="chime-type">
+            <option value="bell">Bell</option>
+            <option value="bowl">Singing bowl</option>
+            <option value="gong">Gong</option>
+            <option value="wood">Wood block</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label for="volume">Volume</label>
+          <input type="range" id="volume" min="0" max="100" value="70" />
+          <span id="volume-val" class="muted">70</span>
+        </div>
+        <div class="setting-row">
+          <label for="start-chime">Starting chime</label>
+          <label class="switch">
+            <input type="checkbox" id="start-chime" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label for="keep-awake">Keep screen awake</label>
+          <label class="switch">
+            <input type="checkbox" id="keep-awake" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <button id="test-chime" class="btn btn-ghost">Test chime</button>
+      </section>
+
+      <p class="muted footer-note">
+        Tip: add this page to your home screen for an app-like experience.
+        On iPhone: tap Share, then “Add to Home Screen.”
+      </p>
+
+      <button id="start-btn" class="btn btn-primary btn-large">Begin session</button>
+    </div>
+
+    <!-- Running View -->
+    <div id="run-view" class="view">
+      <div class="run-container">
+        <p id="phase-label" class="phase-label">Interval 1 of 3</p>
+        <p id="phase-name" class="phase-name">Breathing</p>
+
+        <div class="progress-container">
+          <svg viewBox="0 0 220 220" class="progress-svg">
+            <circle cx="110" cy="110" r="100" class="progress-bg" />
+            <circle id="progress-ring" cx="110" cy="110" r="100" class="progress-fg" />
+          </svg>
+          <div class="progress-center">
+            <div id="time-display" class="time-display">0:00</div>
+            <div id="total-remaining" class="muted">0:00 total left</div>
+          </div>
+        </div>
+
+        <div id="upcoming" class="upcoming">Next: —</div>
+
+        <div class="control-row">
+          <button id="pause-btn" class="btn">Pause</button>
+          <button id="skip-btn" class="btn">Skip</button>
+          <button id="stop-btn" class="btn btn-danger">Stop</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Done View -->
+    <div id="done-view" class="view">
+      <div class="done-container">
+        <div class="done-icon">✓</div>
+        <h2>Session complete</h2>
+        <p id="done-summary" class="muted">You meditated for 0:00</p>
+        <button id="reset-btn" class="btn btn-primary">New session</button>
+      </div>
+    </div>
+
+    <!-- Name prompt modal -->
+    <div id="name-modal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop"></div>
+      <div class="modal-card" role="dialog" aria-labelledby="name-modal-title">
+        <h3 id="name-modal-title">Name this session</h3>
+        <input type="text" id="name-modal-input" maxlength="60" placeholder="e.g. Morning breath" autocomplete="off" />
+        <p id="name-modal-error" class="muted modal-error"></p>
+        <div class="modal-actions">
+          <button id="name-modal-cancel" class="btn">Cancel</button>
+          <button id="name-modal-save" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Service worker registration for offline support + installability
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => {
+          console.warn('Service worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
