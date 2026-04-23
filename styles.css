@@ -51,6 +51,15 @@ html, body {
   min-height: 100vh;
 }
 
+@media (max-width: 420px) {
+  #app {
+    padding: calc(var(--safe-top) + 16px) 12px calc(var(--safe-bottom) + 16px);
+  }
+  .card {
+    padding: 14px 12px;
+  }
+}
+
 .view {
   display: none;
 }
@@ -128,6 +137,7 @@ html, body {
   font-size: 15px;
   padding: 6px 8px;
   border-radius: 6px;
+  text-overflow: ellipsis;
 }
 .interval-row input[type="text"]:focus {
   background: var(--bg-card);
@@ -142,6 +152,12 @@ html, body {
   padding: 6px;
   border-radius: 6px;
   text-align: center;
+  -moz-appearance: textfield;
+}
+.interval-row input[type="number"]::-webkit-outer-spin-button,
+.interval-row input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 .interval-row .unit {
   font-size: 12px;
@@ -154,6 +170,36 @@ html, body {
   font-size: 20px;
   padding: 4px 8px;
   cursor: pointer;
+}
+
+/* Tighten the interval row on narrow screens so long names like
+   "Watching the breath" don't truncate. */
+@media (max-width: 420px) {
+  .interval-row {
+    gap: 4px;
+    padding: 8px 8px;
+  }
+  .interval-row .idx {
+    min-width: 14px;
+    font-size: 12px;
+  }
+  .interval-row input[type="text"] {
+    font-size: 14px;
+    padding: 6px 4px;
+  }
+  .interval-row input[type="number"] {
+    width: 38px;
+    font-size: 13px;
+    padding: 5px 2px;
+  }
+  .interval-row .unit {
+    font-size: 11px;
+    margin-left: -2px;
+  }
+  .interval-row .remove {
+    font-size: 18px;
+    padding: 4px 2px;
+  }
 }
 
 .add-row {
