@@ -340,7 +340,7 @@
 
     if (currentSessionName) {
       title.textContent = currentSessionName + (isDirty ? ' •' : '');
-      subtitle.textContent = isDirty ? 'Unsaved changes' : 'Ready when you are';
+      subtitle.textContent = isDirty ? 'Unsaved changes' : 'Peace begins with a pause';
     } else {
       title.textContent = 'Intervals';
       subtitle.textContent = 'Build your session';

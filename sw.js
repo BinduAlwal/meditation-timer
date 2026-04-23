@@ -2,7 +2,7 @@
 // Cache-first strategy: app shell + audio is cached on install,
 // so the PWA works fully offline after the first load.
 
-const CACHE_VERSION = 'meditation-v1';
+const CACHE_VERSION = 'meditation-v2';
 const APP_SHELL = [
   './',
   './index.html',
