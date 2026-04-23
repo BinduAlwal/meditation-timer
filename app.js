@@ -134,6 +134,37 @@
     return { list, get, save, remove, existsByName };
   })();
 
+  // --- First-launch seeding ---
+  // Pre-populates default sessions on the very first launch of the app on this
+  // device. A persistent flag prevents re-seeding — so if the user later deletes
+  // a seeded session, it stays deleted.
+  const DEFAULT_SESSIONS = [
+    {
+      name: 'Shambhavi Mahamudra',
+      intervals: [
+        { name: 'Invocation Prayer',  seconds: 30 },
+        { name: 'Sukha Kriya',        seconds: 360 },
+        { name: 'AUM Chanting',       seconds: 360 },
+        { name: 'Flutter Breathing',  seconds: 180 },
+        { name: 'Bandhas',            seconds: 60 },
+        { name: 'Watching the breath', seconds: 300 }
+      ]
+    }
+  ];
+
+  function seedDefaultSessions() {
+    const SEED_FLAG = 'med_seeded_v1';
+    if (localStorage.getItem(SEED_FLAG)) return;
+    try {
+      DEFAULT_SESSIONS.forEach(s => {
+        if (!SessionStore.existsByName(s.name)) {
+          SessionStore.save(s);
+        }
+      });
+      localStorage.setItem(SEED_FLAG, '1');
+    } catch (e) { console.warn('Seeding failed:', e); }
+  }
+
   // --- Audio ---
   function getAudio() {
     if (!audioCtx) {
@@ -340,7 +371,7 @@
 
     if (currentSessionName) {
       title.textContent = currentSessionName + (isDirty ? ' •' : '');
-      subtitle.textContent = isDirty ? 'Unsaved changes' : 'Peace begins with a pause';
+      subtitle.textContent = isDirty ? 'Unsaved changes' : 'Ready when you are';
     } else {
       title.textContent = 'Intervals';
       subtitle.textContent = 'Build your session';
@@ -737,6 +768,7 @@
   // --- Init ---
   document.addEventListener('DOMContentLoaded', async () => {
     wire();
+    seedDefaultSessions();
     loadState();
     renderIntervals();
     renderSessions();
